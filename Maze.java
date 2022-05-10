@@ -33,32 +33,100 @@ public class Maze{
 
 	//迷路作成
 	public void dig() {
-		//0下(y++)1上(y--)2右(x++)3左(x--)
+		//0下(y++)1上(y--)2右(x++)3左(x--)hの数順に掘っていく
 		h=rnd.nextInt(4);
-		if(h==0&&isdigdownable()){
-			this.map[this.y+1][this.x]=0;
-			y++;
-			dig();
+		if(h==0) {//0-1-2-3
+			if(isdigdownable()){
+				this.map[this.y+1][this.x]=0;
+				y++;
+				dig();
+			}
+			if(isdigupable()) {
+				this.map[this.y-1][this.x]=0;
+				y--;
+				dig();
+			}
+			if(isdigrightable()) {
+				this.map[this.y][this.x+1]=0;
+				x++;
+				dig();
+			}
+			if(isdigleftable()) {
+				this.map[this.y][this.x-1]=0;
+				x--;
+				dig();
+			}
 		}
-		if(h==1&&isdigupable()) {
-			this.map[this.y-1][this.x]=0;
-			y--;
-			dig();
+		if(h==1) {//1-2-3-0
+			if(isdigupable()) {
+				this.map[this.y-1][this.x]=0;
+				y--;
+				dig();
+			}
+			if(isdigrightable()) {
+				this.map[this.y][this.x+1]=0;
+				x++;
+				dig();
+			}
+			if(isdigleftable()) {
+				this.map[this.y][this.x-1]=0;
+				x--;
+				dig();
+			}
+			if(isdigdownable()){
+				this.map[this.y+1][this.x]=0;
+				y++;
+				dig();
+			}
 		}
-		if(h==2&&isdigrightable()||isdigrightable()) {
-			this.map[this.y][this.x+1]=0;
-			x++;
-			dig();
+		if(h==2) {//2-3-0-1
+			if(isdigrightable()) {
+				this.map[this.y][this.x+1]=0;
+				x++;
+				dig();
+			}
+			if(isdigleftable()) {
+				this.map[this.y][this.x-1]=0;
+				x--;
+				dig();
+			}
+			if(isdigdownable()){
+				this.map[this.y+1][this.x]=0;
+				y++;
+				dig();
+			}
+			if(isdigupable()) {
+				this.map[this.y-1][this.x]=0;
+				y--;
+				dig();
+			}
 		}
-		if(h==3&&isdigleftable()||isdigleftable()) {
-			this.map[this.y][this.x-1]=0;
-			x--;
-			dig();
+		if(h==3) {//3-0-1-2
+			if(isdigleftable()) {
+				this.map[this.y][this.x-1]=0;
+				x--;
+				dig();
+			}
+			if(isdigdownable()){
+				this.map[this.y+1][this.x]=0;
+				y++;
+				dig();
+			}
+			if(isdigupable()) {
+				this.map[this.y-1][this.x]=0;
+				y--;
+				dig();
+			}
+			if(isdigrightable()) {
+				this.map[this.y][this.x+1]=0;
+				x++;
+				dig();
+			}
 		}
 		if(isdigleftable()||isdigupable()||isdigdownable()||isdigrightable()) {
 			dig();
 		}
-		if(isdig()) {
+		if(isdig()) {//通路を探して掘れるか確認
 			dig();
 		}
 		gx=x;
@@ -112,28 +180,90 @@ public class Maze{
 	//まだ掘れるか判定
 	public boolean isdig() {
 		while(true) {
-			x=rnd.nextInt(19)+1;
-			y=rnd.nextInt(19)+1;
-			if(this.map[y][x]==0&&this.map[y-1][x]==1||this.map[y][x]==0&&this.map[y+1][x]==1||this.map[y][x]==0&&this.map[y][x-1]==1||this.map[y][x]==0&&this.map[y][x+1]==1) {
+			x=rnd.nextInt(SIZE-2)+1;
+			y=rnd.nextInt(SIZE-2)+1;
+			if(x%2!=0&&y%2!=0&&this.map[y][x]==0&&this.map[y-1][x]==1||this.map[y][x]==0&&this.map[y+1][x]==1||this.map[y][x]==0&&this.map[y][x-1]==1||this.map[y][x]==0&&this.map[y][x+1]==1) {
 				break;
 			}
 
 		}
-		if(this.map[y][x]==0&&this.map[y+1][x]==1&&isdigdownable()) {
-			h=0;
-			return true;
+		h=rnd.nextInt(4);
+		//数順に確認していってtrueならdig呼び出しfalseで迷路作成完了
+		if(h==0) {
+			if(this.map[y][x]==0&&this.map[y+1][x]==1&&isdigdownable()) {
+				h=0;
+				return true;
+			}
+			if(this.map[y][x]==0&&this.map[y-1][x]==1&&isdigupable()) {
+				h=1;
+				return true;
+			}
+			if(this.map[y][x]==0&&this.map[y][x+1]==1&&isdigrightable()) {
+				h=2;
+				return true;
+			}
+			if(this.map[y][x]==0&&this.map[y][x-1]==1&&isdigleftable()) {
+				h=3;
+				return true;
+			}
+			return false;
 		}
-		if(this.map[y][x]==0&&this.map[y][x-1]==1&&isdigleftable()) {
-			h=3;
-			return true;
+		if(h==1) {
+			if(this.map[y][x]==0&&this.map[y-1][x]==1&&isdigupable()) {
+				h=1;
+				return true;
+			}
+			if(this.map[y][x]==0&&this.map[y][x+1]==1&&isdigrightable()) {
+				h=2;
+				return true;
+			}
+			if(this.map[y][x]==0&&this.map[y][x-1]==1&&isdigleftable()) {
+				h=3;
+				return true;
+			}
+			if(this.map[y][x]==0&&this.map[y+1][x]==1&&isdigdownable()) {
+				h=0;
+				return true;
+			}
+			return false;
 		}
-		if(this.map[y][x]==0&&this.map[y-1][x]==1&&isdigupable()) {
-			h=1;
-			return true;
+		if(h==2) {
+			if(this.map[y][x]==0&&this.map[y][x+1]==1&&isdigrightable()) {
+				h=2;
+				return true;
+			}
+			if(this.map[y][x]==0&&this.map[y][x-1]==1&&isdigleftable()) {
+				h=3;
+				return true;
+			}
+			if(this.map[y][x]==0&&this.map[y+1][x]==1&&isdigdownable()) {
+				h=0;
+				return true;
+			}
+			if(this.map[y][x]==0&&this.map[y-1][x]==1&&isdigupable()) {
+				h=1;
+				return true;
+			}
+			return false;
 		}
-		if(this.map[y][x]==0&&this.map[y][x+1]==1&&isdigrightable()) {
-			h=2;
-			return true;
+		if(h==3) {
+			if(this.map[y][x]==0&&this.map[y][x-1]==1&&isdigleftable()) {
+				h=3;
+				return true;
+			}
+			if(this.map[y][x]==0&&this.map[y+1][x]==1&&isdigdownable()) {
+				h=0;
+				return true;
+			}
+			if(this.map[y][x]==0&&this.map[y-1][x]==1&&isdigupable()) {
+				h=1;
+				return true;
+			}
+			if(this.map[y][x]==0&&this.map[y][x+1]==1&&isdigrightable()) {
+				h=2;
+				return true;
+			}
+			return false;
 		}
 		return false;
 	}
